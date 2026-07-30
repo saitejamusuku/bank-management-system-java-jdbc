@@ -20,14 +20,16 @@ public class DBConnection{
 
         String url = "jdbc:mysql://localhost:3306/bankmanagement";
 		String user = "root";
-		String password = "root123";
+		String password = "ROOT123";
 		
 		try {
 			return DriverManager.getConnection(url,user,password);
 		} catch (SQLException e) {
             e.printStackTrace();
 		}
+
 		return null;
+        
     }
 
 }

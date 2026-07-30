@@ -1,5 +1,4 @@
 package com.saiteja.bankmanagement.service;
-
 import java.util.Scanner;
 
 import com.saiteja.bankmanagement.dao.UserDAO;
@@ -9,18 +8,13 @@ import com.saiteja.bankmanagement.util.InputHandler;
 import com.saiteja.bankmanagement.util.validators.EmailValidator;
 import com.saiteja.bankmanagement.util.validators.PhoneNumberValidator;
 
+
 public class UserService {
+    EmailValidator ev = new EmailValidator();
+    PhoneNumberValidator pv = new PhoneNumberValidator();
+    Scanner sc = InputHandler.getScanner();
 
-    public void register() {
-
-        EmailValidator ev = new EmailValidator();
-        PhoneNumberValidator pv = new PhoneNumberValidator();
-
-        Scanner sc = InputHandler.getScanner();
-
-        System.out.println("Enter your name:");
-        String name = sc.nextLine();
-
+    String getEmail(){
         String email;
         System.out.println("Enter your email");
         do {
@@ -30,9 +24,12 @@ public class UserService {
             }
         } while (!ev.isValidEmail(email));
 
+        return email;
+    }
+
+    String getPhone(){
         System.out.println("Enter your Phone:");
         String phone;
-
         do {
             phone = sc.nextLine();
             if (!pv.isValidIndianNumber(phone)) {
@@ -40,6 +37,10 @@ public class UserService {
             }
         } while (!pv.isValidIndianNumber(phone));
 
+        return phone;
+    }
+
+    String getPassword(){
         System.out.println("Enter your Password");
         String password;
         do {
@@ -50,8 +51,19 @@ public class UserService {
             }
 
         } while (password == null || password.trim().isEmpty());
+        return password;
+    }
 
-        User user = new User(name, email, phone, password);
+    public void register() {
+
+
+        System.out.println("Enter your name:");
+        String name = sc.nextLine();
+        String email = getEmail();
+        String phone = getPhone();
+        String password = getPassword();
+        
+        User user = new User(0,name, email, phone, password);
         UserDAO userDAO = new UserDAOImpl();
 
         if (userDAO.register(user)) {
@@ -60,6 +72,24 @@ public class UserService {
             System.out.println("Registration Failed");
         }
 
+
     }
+
+
+    public User login(){
+
+        UserDAO userDAO = new UserDAOImpl();
+        User user = userDAO.login(getEmail(), getPassword());
+        if(user!=null){
+            System.out.println("Login Success");
+            
+            return user;
+        }else{
+            System.out.println("Login Failed");
+        }
+        return null;
+    }
+
+
 
 }
