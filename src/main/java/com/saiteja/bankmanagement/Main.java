@@ -48,9 +48,9 @@ public class Main {
                             System.out.println("\n===== Account Menu =====");
                             System.out.println("1. Create Account");
                             System.out.println("2. Deposit");
-                            System.out.println("3. Withdraw");
+                            System.out.println("3. View Balance");
                             System.out.println("4. Transfer");
-                            System.out.println("5. View Balance");
+                            System.out.println("5. Withdrawl View Balance");
                             System.out.println("6. Logout");
                             System.out.print("Choose option: ");
 
@@ -68,8 +68,8 @@ public class Main {
                                     break;
 
                                 case 3:
-                                    // accountService.withdraw(currentUser);
-                                    System.out.println("Withdraw feature coming soon...");
+                                    accountService.viewBalance(currentUser);
+                                    
                                     break;
 
                                 case 4:
@@ -78,8 +78,9 @@ public class Main {
                                     break;
 
                                 case 5:
-                                    // accountService.viewBalance(currentUser);
-                                    System.out.println("View Balance feature coming soon...");
+                                    
+                                    // accountService.withdraw(currentUser);
+                                    System.out.println("Withdraw feature coming soon...");
                                     break;
 
                                 case 6:

@@ -33,10 +33,14 @@ public class AccountService {
         );
 
         if (accountDAO.createAccount(account)) {
+            System.out.println();
             System.out.println("\nAccount Created Successfully!");
             System.out.println("Account Number : " + accountNumber);
+            System.out.println();
         } else {
+            System.out.println();
             System.out.println("\nFailed to create account.");
+            System.out.println();
         }
     }
 
@@ -111,10 +115,37 @@ public class AccountService {
         double deposit = sc.nextDouble();sc.nextLine();
 
         if(accountDAO.deposit(user.getId(),accountNumber, pin, deposit)){
+            System.out.println();
             System.out.println("Succesfully deposited: "+ deposit);
+            System.out.println();
         }
         else{
+            System.out.println();
             System.out.println("Failure!!");
+            System.out.println();
+        }
+
+    }
+
+    public void viewBalance(User currentUser){
+
+        System.out.println("Enter the account number:");
+        long accountNumber = sc.nextLong(); sc.nextLine();
+
+        System.out.println("Enter the pin number:");
+        String pin = sc.nextLine();
+   
+        double currentUserBalance = accountDAO.viewBalance(currentUser.getId(),accountNumber, pin);
+        if(currentUserBalance >= 0)
+        {   
+            System.out.println();
+            System.out.println("Your Balance is: "+ currentUserBalance);
+        }
+        else
+        {   
+            System.out.println();
+            System.out.println("Invalid Account Number or PIN");
+            System.out.println();
         }
 
     }

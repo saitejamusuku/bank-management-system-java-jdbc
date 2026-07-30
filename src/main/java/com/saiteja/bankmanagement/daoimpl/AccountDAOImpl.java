@@ -56,7 +56,7 @@ public class AccountDAOImpl implements AccountDAO {
             pstmt = connect.prepareStatement(sql);
             pstmt.setLong(1,accountNumber);
             pstmt.setString(2, pin);
-            
+            pstmt.setInt(3,user_id);
             rs = pstmt.executeQuery();
             if(rs.next()){
                 
@@ -88,6 +88,45 @@ public class AccountDAOImpl implements AccountDAO {
         return false;
     }
 
+
+    public double viewBalance(int user_id, long accountNumber, String pin){
+
+        connect = DBConnection.getConnection();
+        try {
+            
+
+            String sql = "select balance from accounts where account_no = ? and pin = ? and user_id = ?";
+
+            pstmt = connect.prepareStatement(sql);
+
+            pstmt.setLong(1,accountNumber);
+            pstmt.setString(2, pin);
+            pstmt.setInt(3,user_id);
+            
+            rs = pstmt.executeQuery();
+            if(rs.next()){
+                
+                return rs.getDouble("balance");
+
+            }
+            
+            
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        finally{
+            try {
+                if (rs != null) rs.close();
+                if (pstmt != null) pstmt.close();
+                if (connect != null) connect.close();
+            } catch (SQLException e1) {
+                
+                e1.printStackTrace();
+            }
+        }
+        
+        return -1.0;
+    }
 
 
 }
