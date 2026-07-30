@@ -129,4 +129,52 @@ public class AccountDAOImpl implements AccountDAO {
     }
 
 
+    /////Withdraw money
+    
+    public boolean withdraw(int user_id, long accountNumber, String pin, double withdrawAmount){
+        
+        double currentBalance = viewBalance(user_id, accountNumber, pin);
+        if(currentBalance<0){
+            System.out.println("Invalid Account Number or PIN");
+            return false;
+        }
+        if(currentBalance < withdrawAmount){
+            System.out.println("Insufficient Balance");
+            return false;
+        }
+        else{
+
+            connect = DBConnection.getConnection();
+        
+        try {
+            String updateBalancequery = "update accounts set balance = balance - ? where account_no = ?";
+
+                
+                pstmt = connect.prepareStatement(updateBalancequery);
+                pstmt.setDouble(1,withdrawAmount);
+                pstmt.setLong(2, accountNumber);
+
+                return pstmt.executeUpdate() > 0;
+            
+            
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            finally{
+                try {
+                    if (rs != null) rs.close();
+                    if (pstmt != null) pstmt.close();
+                    if (connect != null) connect.close();
+                } catch (SQLException e1) {
+                    
+                    e1.printStackTrace();
+                }
+            }
+
+        }
+        return false;
+    }
+
+
+
 }

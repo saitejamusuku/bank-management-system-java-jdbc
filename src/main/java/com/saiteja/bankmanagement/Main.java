@@ -79,7 +79,7 @@ public class Main {
 
                                 case 5:
                                     
-                                    // accountService.withdraw(currentUser);
+                                    accountService.withdraw(currentUser);
                                     System.out.println("Withdraw feature coming soon...");
                                     break;
 

@@ -8,9 +8,10 @@ import com.saiteja.bankmanagement.model.Account;
 import com.saiteja.bankmanagement.model.User;
 import com.saiteja.bankmanagement.util.AccountNumberGenerator;
 import com.saiteja.bankmanagement.util.InputHandler;
+import com.saiteja.bankmanagement.util.validators.AccountPinHelper;
 
 public class AccountService {
-
+    AccountPinHelper ac = new AccountPinHelper();
     private final Scanner sc = InputHandler.getScanner();
     private final AccountDAO accountDAO = new AccountDAOImpl();
 
@@ -107,10 +108,9 @@ public class AccountService {
     //deposit
 
     public void deposit(User user){
-        System.out.println("Enter the account number:");
-        long accountNumber = sc.nextLong(); sc.nextLine();
-        System.out.println("Enter the pin number:");
-        String pin = sc.nextLine();
+
+        long accountNumber = ac.getAccountNumber();
+        String pin = ac.getPin();
         System.out.println("Enter the deposit amount:");
         double deposit = sc.nextDouble();sc.nextLine();
 
@@ -129,11 +129,8 @@ public class AccountService {
 
     public void viewBalance(User currentUser){
 
-        System.out.println("Enter the account number:");
-        long accountNumber = sc.nextLong(); sc.nextLine();
-
-        System.out.println("Enter the pin number:");
-        String pin = sc.nextLine();
+        long accountNumber = ac.getAccountNumber();
+        String pin = ac.getPin();
    
         double currentUserBalance = accountDAO.viewBalance(currentUser.getId(),accountNumber, pin);
         if(currentUserBalance >= 0)
@@ -147,6 +144,28 @@ public class AccountService {
             System.out.println("Invalid Account Number or PIN");
             System.out.println();
         }
+
+    }
+
+
+    public void withdraw(User user){
+
+        long accountNumber = ac.getAccountNumber();
+        String pin = ac.getPin();
+
+        System.out.println("Enter Withdraw Amount:");
+        double withdrawAmount = sc.nextDouble();
+         sc.nextLine();
+
+        if(accountDAO.withdraw(user.getId(), accountNumber, pin, withdrawAmount)){
+
+            System.out.println("withdraw Successful");
+
+        }
+        
+        
+       
+
 
     }
 
