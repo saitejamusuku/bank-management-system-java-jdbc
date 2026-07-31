@@ -73,14 +73,12 @@ public class Main {
                                     break;
 
                                 case 4:
-                                    // accountService.transfer(currentUser);
-                                    System.out.println("Transfer feature coming soon...");
+                                    accountService.transfer(currentUser);
                                     break;
 
                                 case 5:
                                     
                                     accountService.withdraw(currentUser);
-                                    System.out.println("Withdraw feature coming soon...");
                                     break;
 
                                 case 6:

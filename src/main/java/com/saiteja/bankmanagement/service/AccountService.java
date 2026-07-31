@@ -162,13 +162,30 @@ public class AccountService {
             System.out.println("withdraw Successful");
 
         }
-        
-        
-       
-
 
     }
 
 
+    public void transfer(User user){
 
+        long accountNumber = ac.getAccountNumber();
+        String pin = ac.getPin();
+        int transferAmount = sc.nextInt();
+        sc.nextLine();
+        System.out.println("Enter Recevier accout number");
+        long toAccountNumber = ac.getAccountNumber();
+
+        if (accountNumber == toAccountNumber) {
+            System.out.println("Cannot transfer to the same account.");
+            return;
+        }
+
+        if(accountDAO.transfer(user.getId(), accountNumber, pin, transferAmount, toAccountNumber)){
+            System.out.println("Amount transfered successfully");
+        }
+        else{
+            System.out.println("Transfer failed. No money was deducted from your account.");
+        }
+
+    }
 }

@@ -8,5 +8,6 @@ public interface AccountDAO {
     boolean deposit(int user_id, long accountNumber, String pin, double deposit);
     double viewBalance(int user_id,long accountNumber, String pin); 
     boolean withdraw(int user_id, long accountNumber, String pin, double withdrawAmount);
+    boolean transfer(int user_id, long accountNumber, String pin, double transferAmount, long toAccountNumber);
 
 }
