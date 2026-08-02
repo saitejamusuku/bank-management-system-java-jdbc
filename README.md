@@ -1,4 +1,4 @@
-# Bank Management System
+# Bank Management System Version 1.0
 
 A console-based **Bank Management System** developed using **Java, Maven, JDBC, and MySQL**.
 
