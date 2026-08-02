@@ -17,6 +17,55 @@ public class AccountDAOImpl implements AccountDAO {
     PreparedStatement pstmt = null;
     ResultSet rs = null;
 
+    public boolean checkAccountStatus(int user_id) {
+
+        connect = DBConnection.getConnection();
+        String checkquery = "select 1 from accounts where user_id = ?";
+
+        try {
+            pstmt = connect.prepareStatement(checkquery);
+            pstmt.setInt(1, user_id);
+            rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+
+            try {
+                if (connect != null)
+                    connect.close();
+                if (pstmt != null)
+                    pstmt.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+        }
+        return false;
+    }
+
+    public boolean verifyCredientals(long accountNumber, String pin, int user_id) {
+
+        connect = DBConnection.getConnection();
+
+        try {
+            String sql = "select 1 from accounts where account_no = ? and pin = ? and user_id = ?";
+            pstmt = connect.prepareStatement(sql);
+            pstmt.setLong(1, accountNumber);
+            pstmt.setString(2, pin);
+            pstmt.setInt(3, user_id);
+            rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public boolean createAccount(Account account) {
 
         connect = DBConnection.getConnection();
@@ -53,23 +102,11 @@ public class AccountDAOImpl implements AccountDAO {
         try {
             String updateBalancequery = "update accounts set balance = balance + ? where account_no = ?";
 
-            String sql = "select 1 from accounts where account_no = ? and pin = ? and user_id = ?";
-            pstmt = connect.prepareStatement(sql);
-            pstmt.setLong(1, accountNumber);
-            pstmt.setString(2, pin);
-            pstmt.setInt(3, user_id);
-            rs = pstmt.executeQuery();
-            if (rs.next()) {
+            pstmt = connect.prepareStatement(updateBalancequery);
+            pstmt.setDouble(1, deposit);
+            pstmt.setLong(2, accountNumber);
 
-                pstmt = connect.prepareStatement(updateBalancequery);
-                pstmt.setDouble(1, deposit);
-                pstmt.setLong(2, accountNumber);
-
-                return pstmt.executeUpdate() > 0;
-
-            } else {
-                System.out.println("Invalid Account Number or PIN");
-            }
+            return pstmt.executeUpdate() > 0;
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -140,10 +177,7 @@ public class AccountDAOImpl implements AccountDAO {
     public boolean withdraw(int user_id, long accountNumber, String pin, double withdrawAmount) {
 
         double currentBalance = viewBalance(user_id, accountNumber, pin);
-        if (currentBalance < 0) {
-            System.out.println("Invalid Account Number or PIN");
-            return false;
-        }
+
         if (currentBalance < withdrawAmount) {
             System.out.println("Insufficient Balance");
             return false;
@@ -341,57 +375,40 @@ public class AccountDAOImpl implements AccountDAO {
         try {
             String historyQuery = "select * from transactions where account_no = ?";
 
-            String verifyQuery = "select 1 from accounts where account_no = ? and pin = ? and user_id = ?";
+            pstmt2 = connect.prepareStatement(historyQuery);
+            pstmt2.setLong(1, accountNumber);
 
-            pstmt1 = connect.prepareStatement(verifyQuery);
-            pstmt1.setLong(1, accountNumber);
-            pstmt1.setString(2, pin);
-            pstmt1.setInt(3, user_id);
+            rs2 = pstmt2.executeQuery();
+            if (rs2.next()) {
 
-            rs1 = pstmt1.executeQuery();
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MMM-yyyy HH:mm");
 
-            if (rs1.next()) {
+                System.out.println("\n================ TRANSACTION HISTORY ================");
+                System.out.printf("%-5s %-20s %-15s %-12s %s%n",
+                        "ID", "Date", "Type", "Amount", "Description");
+                System.out.println(
+                        "------------------------------------------------------------------------------------------------");
+                do {
+                    Timestamp timestamp = rs2.getTimestamp("transaction_time");
+                    String formattedDate = timestamp.toLocalDateTime().format(formatter);
 
-                pstmt2 = connect.prepareStatement(historyQuery);
-                pstmt2.setLong(1, accountNumber);
-
-                rs2 = pstmt2.executeQuery();
-                if (rs2.next()) {
-
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MMM-yyyy HH:mm");
-
-                    System.out.println("\n================ TRANSACTION HISTORY ================");
-                    System.out.printf("%-5s %-20s %-15s %-12s %s%n",
-                            "ID", "Date", "Type", "Amount", "Description");
-                    System.out.println(
-                            "------------------------------------------------------------------------------------------------");
-                    do {
-                        Timestamp timestamp = rs2.getTimestamp("transaction_time");
-                        String formattedDate = timestamp.toLocalDateTime().format(formatter);
-
-                        System.out.printf("%-5d %-20s %-15s Rs. %-8.2f %s%n",
-                                rs2.getInt("transaction_id"),
-                                formattedDate,
-                                rs2.getString("transaction_type"),
-                                rs2.getDouble("amount"),
-                                rs2.getString("description"));
-                    } while (rs2.next());
-
-                } else {
-                    System.out.println("No transaction history found! Make your first transaction.");
-                }
+                    System.out.printf("%-5d %-20s %-15s Rs. %-8.2f %s%n",
+                            rs2.getInt("transaction_id"),
+                            formattedDate,
+                            rs2.getString("transaction_type"),
+                            rs2.getDouble("amount"),
+                            rs2.getString("description"));
+                } while (rs2.next());
 
             } else {
-                System.out.println("Invalid Account Number or PIN");
+                System.out.println("No transaction history found! Make your first transaction.");
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             try {
-                if (rs1 != null) {
-                    rs1.close();
-                }
+
                 if (rs2 != null) {
                     rs2.close();
                 }

@@ -15,7 +15,27 @@ public class AccountService {
     private final Scanner sc = InputHandler.getScanner();
     private final AccountDAO accountDAO = new AccountDAOImpl();
 
-    public void createAccount(User user) {
+    public boolean checkAccountStatus(User user){
+        if(accountDAO.checkAccountStatus(user.getId())){
+            return true;
+        }
+        return false;
+    }
+
+    public boolean verifyCredentials(long accountNumber, String pin, User user){
+        if(accountDAO.verifyCredientals(accountNumber, pin, user.getId())){
+            System.out.println("Account details verified");
+            return true;
+        }
+        else{
+            System.out.println("Please check your credient and TRY AGAIN !!");
+        }
+        
+        return false;
+    }
+
+    public boolean createAccount(User user) {
+        System.out.println("please open your bank account:");
 
         String accountType = getAccountType();
 
@@ -38,11 +58,13 @@ public class AccountService {
             System.out.println("\nAccount Created Successfully!");
             System.out.println("Account Number : " + accountNumber);
             System.out.println();
+            return true;
         } else {
             System.out.println();
             System.out.println("\nFailed to create account.");
             System.out.println();
         }
+        return false;
     }
 
     private String getAccountType() {
@@ -107,10 +129,8 @@ public class AccountService {
 
     //deposit
 
-    public void deposit(User user){
+    public void deposit(User user, long accountNumber, String pin){
 
-        long accountNumber = ac.getAccountNumber();
-        String pin = ac.getPin();
         System.out.println("Enter the deposit amount:");
         double deposit = sc.nextDouble();sc.nextLine();
 
@@ -129,10 +149,8 @@ public class AccountService {
 
     }
 
-    public void viewBalance(User currentUser){
+    public void viewBalance(User currentUser, long accountNumber, String pin){
 
-        long accountNumber = ac.getAccountNumber();
-        String pin = ac.getPin();
    
         double currentUserBalance = accountDAO.viewBalance(currentUser.getId(),accountNumber, pin);
         if(currentUserBalance >= 0)
@@ -150,10 +168,7 @@ public class AccountService {
     }
 
 
-    public void withdraw(User user){
-
-        long accountNumber = ac.getAccountNumber();
-        String pin = ac.getPin();
+    public void withdraw(User user, long accountNumber, String pin){
 
         System.out.println("Enter Withdraw Amount:");
         double withdrawAmount = sc.nextDouble();
@@ -169,10 +184,8 @@ public class AccountService {
     }
 
 
-    public void transfer(User user){
-
-        long fromAccount = ac.getAccountNumber();
-        String pin = ac.getPin();
+    public void transfer(User user, long fromAccount, String pin){
+;
         System.out.println("Enter the amount you want to transfer: ");
         double amount = sc.nextDouble();
         sc.nextLine();
@@ -195,11 +208,10 @@ public class AccountService {
 
     }
 
-    public void viewTransactionHistory(User user){
+    public void viewTransactionHistory(User user, long accountNumber, String pin){
 
-        long fromAccount = ac.getAccountNumber();
-        String pin = ac.getPin();
-        accountDAO.viewTransactionHistory(fromAccount, pin,user.getId());
+
+        accountDAO.viewTransactionHistory(accountNumber, pin,user.getId());
 
     }
 

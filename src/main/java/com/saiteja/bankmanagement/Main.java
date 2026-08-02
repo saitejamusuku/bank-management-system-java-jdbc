@@ -38,21 +38,59 @@ public class Main {
                     User currentUser = userService.login();
 
                     if (currentUser != null) {
+                        boolean loggedIn = true;
+                        boolean isAccount = accountService.checkAccountStatus(currentUser);
+
+                        if (!isAccount && !accountService.createAccount(currentUser)) {
+                            System.out.println("Unable to create account.");
+                            break; 
+                        }
+
+                        isAccount = true;
 
                         System.out.println("\n===== Welcome " + currentUser.getName() + " =====");
+                        
+                        boolean isverified = false;
+                        long accountNumber = -1;
+                        String pin = "";
 
-                        boolean loggedIn = true;
+                        int attempts = 3;
 
-                        while (loggedIn) {
+                        while (attempts > 0 && !isverified) {
+
+                            System.out.print("Enter your account number: ");
+                            accountNumber = sc.nextLong();
+                            sc.nextLine();
+
+                            System.out.print("Enter your PIN: ");
+                            pin = sc.nextLine();
+
+                            if (accountService.verifyCredentials(accountNumber, pin, currentUser)) {
+                                isverified = true;
+                            } else {
+                                attempts--;
+                                if (attempts > 0) {
+                                    System.out.println("Invalid account number or PIN.");
+                                    System.out.println("Attempts remaining: " + attempts);
+                                }
+                            }
+                        }
+
+                        if (!isverified) {
+                            System.out.println("Too many failed attempts.");
+                            System.out.println("Returning to Main Menu...");
+                            break; 
+                        }
+
+                        while (loggedIn && isAccount && isverified) {
 
                             System.out.println("\n===== Account Menu =====");
-                            System.out.println("1. Create Account");
-                            System.out.println("2. Deposit");
-                            System.out.println("3. View Balance");
-                            System.out.println("4. Transfer");
-                            System.out.println("5. Withdrawl View Balance");
-                            System.out.println("6. View Transaction History");
-                            System.out.println("7. Logout");
+                            System.out.println("1. Deposit");
+                            System.out.println("2. View Balance");
+                            System.out.println("3. Transfer");
+                            System.out.println("4. Withdrawl View Balance");
+                            System.out.println("5. View Transaction History");
+                            System.out.println("6. Logout");
                             System.out.print("Choose option: ");
 
                             int loginChoice = sc.nextInt();
@@ -61,31 +99,27 @@ public class Main {
                             switch (loginChoice) {
 
                                 case 1:
-                                    accountService.createAccount(currentUser);
+                                    accountService.deposit(currentUser, accountNumber, pin);
                                     break;
 
                                 case 2:
-                                    accountService.deposit(currentUser);
+                                    accountService.viewBalance(currentUser, accountNumber, pin);
+
                                     break;
 
                                 case 3:
-                                    accountService.viewBalance(currentUser);
-
+                                    accountService.transfer(currentUser, accountNumber, pin);
                                     break;
 
                                 case 4:
-                                    accountService.transfer(currentUser);
-                                    break;
 
+                                    accountService.withdraw(currentUser, accountNumber, pin);
+                                    break;
                                 case 5:
-
-                                    accountService.withdraw(currentUser);
+                                    accountService.viewTransactionHistory(currentUser, accountNumber, pin);
                                     break;
+
                                 case 6:
-                                    accountService.viewTransactionHistory(currentUser);
-                                    break;
-
-                                case 7:
                                     System.out.println("Logged out successfully.");
                                     loggedIn = false;
                                     break;
