@@ -51,7 +51,8 @@ public class Main {
                             System.out.println("3. View Balance");
                             System.out.println("4. Transfer");
                             System.out.println("5. Withdrawl View Balance");
-                            System.out.println("6. Logout");
+                            System.out.println("6. View Transaction History");
+                            System.out.println("7. Logout");
                             System.out.print("Choose option: ");
 
                             int loginChoice = sc.nextInt();
@@ -69,7 +70,7 @@ public class Main {
 
                                 case 3:
                                     accountService.viewBalance(currentUser);
-                                    
+
                                     break;
 
                                 case 4:
@@ -77,11 +78,14 @@ public class Main {
                                     break;
 
                                 case 5:
-                                    
+
                                     accountService.withdraw(currentUser);
                                     break;
-
                                 case 6:
+                                    accountService.viewTransactionHistory(currentUser);
+                                    break;
+
+                                case 7:
                                     System.out.println("Logged out successfully.");
                                     loggedIn = false;
                                     break;

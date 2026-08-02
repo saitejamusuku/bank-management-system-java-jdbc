@@ -10,8 +10,7 @@ import com.saiteja.bankmanagement.util.validators.PhoneNumberValidator;
 
 
 public class UserService {
-    EmailValidator ev = new EmailValidator();
-    PhoneNumberValidator pv = new PhoneNumberValidator();
+    
     Scanner sc = InputHandler.getScanner();
 
     String getEmail(){
@@ -19,10 +18,10 @@ public class UserService {
         System.out.println("Enter your email");
         do {
             email = sc.nextLine();
-            if (!ev.isValidEmail(email)) {
+            if (!EmailValidator.isValidEmail(email)) {
                 System.out.println("Please Re-Enter the email");
             }
-        } while (!ev.isValidEmail(email));
+        } while (!EmailValidator.isValidEmail(email));
 
         return email;
     }
@@ -32,10 +31,10 @@ public class UserService {
         String phone;
         do {
             phone = sc.nextLine();
-            if (!pv.isValidIndianNumber(phone)) {
+            if (!PhoneNumberValidator.isValidIndianNumber(phone)) {
                 System.out.println("Re-Enter your Phone");
             }
-        } while (!pv.isValidIndianNumber(phone));
+        } while (!PhoneNumberValidator.isValidIndianNumber(phone));
 
         return phone;
     }

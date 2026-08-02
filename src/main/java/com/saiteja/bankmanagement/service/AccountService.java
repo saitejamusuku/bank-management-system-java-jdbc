@@ -115,6 +115,8 @@ public class AccountService {
         double deposit = sc.nextDouble();sc.nextLine();
 
         if(accountDAO.deposit(user.getId(),accountNumber, pin, deposit)){
+
+            accountDAO.transactions(accountNumber,"DEPOSIT", deposit, "Rupees"+ deposit + " as been added to your account");
             System.out.println();
             System.out.println("Succesfully deposited: "+ deposit);
             System.out.println();
@@ -158,7 +160,8 @@ public class AccountService {
          sc.nextLine();
 
         if(accountDAO.withdraw(user.getId(), accountNumber, pin, withdrawAmount)){
-
+            
+            accountDAO.transactions(accountNumber,"WITHDRAW", withdrawAmount, "Rupees"+ withdrawAmount + " as been drawn from your account");
             System.out.println("withdraw Successful");
 
         }
@@ -168,19 +171,22 @@ public class AccountService {
 
     public void transfer(User user){
 
-        long accountNumber = ac.getAccountNumber();
+        long fromAccount = ac.getAccountNumber();
         String pin = ac.getPin();
-        int transferAmount = sc.nextInt();
+        System.out.println("Enter the amount you want to transfer: ");
+        double amount = sc.nextDouble();
         sc.nextLine();
         System.out.println("Enter Recevier accout number");
-        long toAccountNumber = ac.getAccountNumber();
+        long toAccount = sc.nextLong();
 
-        if (accountNumber == toAccountNumber) {
+        if (fromAccount == toAccount) {
             System.out.println("Cannot transfer to the same account.");
             return;
         }
 
-        if(accountDAO.transfer(user.getId(), accountNumber, pin, transferAmount, toAccountNumber)){
+        if(accountDAO.transfer(user.getId(), fromAccount, pin, amount, toAccount)){
+            accountDAO.transactions(fromAccount,"TRANSFER_OUT", amount, "Rupees"+ amount + " as been sent from your account to " + toAccount);
+            accountDAO.transactions(toAccount,"TRANSFER_IN", amount, "Rupees"+ amount + " as been recevied to your account from " + fromAccount);
             System.out.println("Amount transfered successfully");
         }
         else{
@@ -188,4 +194,13 @@ public class AccountService {
         }
 
     }
+
+    public void viewTransactionHistory(User user){
+
+        long fromAccount = ac.getAccountNumber();
+        String pin = ac.getPin();
+        accountDAO.viewTransactionHistory(fromAccount, pin,user.getId());
+
+    }
+
 }
